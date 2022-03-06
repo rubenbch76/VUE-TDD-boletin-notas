@@ -1,49 +1,58 @@
 <template>
-  <div id="componente">
-    <h1>BOLETÍN DE NOTAS</h1>
+  <v-app>
+    <v-card class="mx-auto" width="256" tile>
+      <p class="font-weight-bold">Introducción de datos</p>
 
-    <label for="name"></label>Nombre del alumno
-    <input
-      type="text"
-      v-model="name"
-      name="name"
-      id="name"
-      placeholder="Introduzca nombre del alumno"
-    />
+      <v-form ref="form" v-model="valid" lazy-validation>
+        <v-text-field
+          v-model="name"
+          :counter="20"
+          :rules="nameRules"
+          label="Name"
+          required
+        ></v-text-field>
+        <v-text-field
+          v-model="course"
+          :counter="20"
+          :rules="courseRules"
+          label="Course"
+          required
+        ></v-text-field>
+        <v-text-field
+          v-model="nota"
+          :counter="20"
+          :rules="notaRules"
+          label="nota"
+          required
+        ></v-text-field>
+        <v-btn
+          :disabled="!valid"
+          color="success"
+          class="mr-4"
+          @click="calificacion"
+        >
+          Aceptar
+        </v-btn>
+      </v-form>
+    </v-card>
 
-    <h1>INTRODUCCIÓN DE DATOS</h1>
+    <v-card class="mx-auto mt-10" width="256" tile>
+      <p class="font-weight-bold">Notas finales: {{ name }}</p>
 
-    <label for="course"></label>Asignatura
-    <input
-      type="text"
-      v-model="course"
-      name="course"
-      id="course"
-      placeholder="Introduzca asignatura"
-    />
-    <p></p>
-    <label for="nota"></label>Nota
-    <input
-      type="number"
-      v-model="nota"
-      name="nota"
-      id="nota"
-      placeholder="Indique su nota"
-    />
-
-    <button @click="calificacion">Enviar</button>
-
-    <h1>Resultado académico</h1>
-
-    <div id="res">
-      <p>Alumno: {{ name }}</p>
-      <ul>
-        <li v-for="(result, index) in finalMessage" :key="index">
-          {{ result }}
-        </li>
-      </ul>
-    </div>
-  </div>
+      <div id="res">
+        <v-list-item>
+          <v-list-item-content>
+            <v-list-item-title
+              v-for="(result, index) in finalMessage"
+              :key="index"
+            >
+              {{ result }}
+            </v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </div>
+    </v-card>
+  </v-app>
 </template>
 
 <script>
@@ -55,6 +64,14 @@ export default {
     name: "",
     message: "",
     finalMessage: [],
+    notaRules: [
+      (value) => !!value || "Campo requerido.",
+      (value) => (value || "").length < 3 || "Máximo 2 dígitos",
+      (value) => {
+        const pattern = /^\d+$/;
+        return pattern.test(value) || "Nota incorrecta. Solo dígitos";
+      },
+    ],
   }),
   methods: {
     calificacion() {
